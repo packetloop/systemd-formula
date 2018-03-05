@@ -1,10 +1,10 @@
-{% for unittype, units in pillar['systemd:units'].iteritems()  %}
+{% for unittype, units in pillar['systemd']['units'].iteritems()  %}
 {% for unit, unitconfig in units.iteritems() %}
 
 /etc/systemd/system/{{ unit }}.{{ unittype }}:
   file.managed:
     - template: jinja
-    - source: salt://systemd/unit.jinja
+    - source: salt://systemd/units/unit.jinja
     - context:
         config: {{ unitconfig }}
     - watch_in:
@@ -12,13 +12,13 @@
 
 enable_{{ unit }}_{{ unittype }}:
   cmd.wait:
-    - name: systemctl enable {{ unit }}
+    - name: systemctl enable {{ unit }}.{{ unittype }}
     - watch:
       - cmd: reload_systemd_configuration
+
 {% endfor %}
 {% endfor %}
 
 reload_systemd_configuration:
   cmd.wait:
     - name: systemctl daemon-reload
-
