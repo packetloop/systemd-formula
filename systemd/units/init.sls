@@ -16,6 +16,14 @@ enable_{{ unit }}_{{ unittype }}:
     - watch:
       - cmd: reload_systemd_configuration
 
+{%- if unittype == timer %}
+start_{{ unit }}_{{ unittype }}:
+  cmd.wait:
+    - name: systemctl start {{ unit }}.{{ unittype }}
+    - watch:
+      - cmd: reload_systemd_configuration
+{%- endif %}
+
 {% endfor %}
 {% endfor %}
 
